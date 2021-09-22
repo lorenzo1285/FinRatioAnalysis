@@ -1,15 +1,15 @@
 
 # FinRatioAnalisys
 
-Finacial Ratio Analisys Project: 
+Finacial Ratio Analysis Project: 
 
--Return Analisys
+-Return Analysis
 
--Margin Analisys
+-Margin Analysis
 
--Leverage Analisys
+-Leverage Analysis
 
--Liquidity Analisys
+-Liquidity Analysis
 
 ## Documentation
 
