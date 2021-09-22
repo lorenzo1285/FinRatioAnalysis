@@ -20,7 +20,9 @@ Quick Start.
 Packages:
 
 pip install yahoo-fin
+
 pip install pandas
+
 pip install FinRatioAnalysis
 
 Import:
