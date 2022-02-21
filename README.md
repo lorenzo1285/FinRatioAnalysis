@@ -27,7 +27,7 @@ pip install FinRatioAnalysis
 
 Import:
 
-From FinRatioAnalysis import FinRatioAnalysis
+from FinRatioAnalysis import FinRatioAnalysis
 
 Create an Objet:
 
