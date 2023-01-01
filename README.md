@@ -27,14 +27,10 @@ Finacial Ratio Analysis Project:
 Quick Start.
 ```bash
   #Packages:
-
-  pip install yfinance
-
-  pip install FinRatioAnalysis
-
-  pip install pandas-datareader
-
-  pip install plotly
+    pip install yfinanc
+    pip install FinRatioAnalysis
+    pip install pandas-datareader
+    pip install plotly
 
   #Import:
     import yfinance as yf
@@ -52,21 +48,13 @@ Quick Start.
   #Available methods:
 
   AAPL.ReturnRatios()
-
   AAPL.LeverageRatios()
-
   AAPL.EfficiencyRatios()
-
   AAPL.LiquidityRatios()
-
   AAPL.CCC()
-
   AAPL.z_score()
-
   AAPL.z_score_plot()
-
   AAPL.CAPM()
-
   AAPL.WACC()
 ```
 
@@ -92,10 +80,7 @@ Install FinanceAnalysis, yahoo finance, pandas-datareader and plotly  with pip
 
 ```bash
   pip install yfinance
-
   pip install FinRatioAnalysis
-
   pip install pandas-datareader
-
   pip install plotly
 ```
