@@ -8,7 +8,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '0.0.5'
+VERSION = '0.0.7'
 DESCRIPTION = 'Quantitative Finance Ratio Analysis'
 LONG_DESCRIPTION = 'Package that allows analyse the fundamentals of yahoo finance tickers'
 
@@ -23,12 +23,11 @@ setup(
     long_description=long_description,
     license='MIT',
     packages=find_packages(),
-    install_requires=['yfinance', 
-                  'numpy',
-                   'pandas',
-                   'pandas_datareader',
-                   'plotly.graph_objects',
-                   'datetime'
+    install_requires=[  'yfinance', 
+                        'numpy',
+                        'pandas',
+                        'pandas_datareader',
+                        'plotly',
                    ],
     keywords=['python', 'finance', 'quantitative analysis', 'fundamental analysis', 'portfolio'],
     classifiers=[
