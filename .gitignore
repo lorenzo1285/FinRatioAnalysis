@@ -87,3 +87,4 @@ Thumbs.db
 
 # Project specific
 *.log
+bump_version.py
