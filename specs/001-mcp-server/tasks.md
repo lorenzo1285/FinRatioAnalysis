@@ -28,14 +28,14 @@ to enforce FR-003/FR-004/FR-015; the 10-Q evaluation suite is required by SC-005
 - [x] **T001** Create package directories: `finratioanalysis_mcp/`,
   `finratioanalysis_mcp/tools/`, `tests_mcp/`, `tests_mcp/tools/`. Add empty
   `__init__.py` files in each.
-- [ ] **T002** Update `pyproject.toml`: add `[project.optional-dependencies]`
+- [x] **T002** Update `pyproject.toml`: add `[project.optional-dependencies]`
   with `mcp = ["mcp>=1.2", "pydantic>=2"]`, add `[project.scripts]` entry
   `finratioanalysis-mcp = "finratioanalysis_mcp.server:main"`, and add
   `finratioanalysis_mcp*` to `[tool.setuptools] packages`.
-- [ ] **T003** [P] Add `tests_mcp/` to `pytest.ini` testpaths (or create a
+- [x] **T003** [P] Add `tests_mcp/` to `pytest.ini` testpaths (or create a
   separate `pytest-mcp.ini`) and register an `integration` marker if not
   already present.
-- [ ] **T004** [P] Create `finratioanalysis_mcp/__init__.py` with a
+- [x] **T004** [P] Create `finratioanalysis_mcp/__init__.py` with a
   `__version__ = "0.1.0"` literal.
 
 **Checkpoint**: `pip install -e ".[mcp]"` succeeds; `python -c "import
@@ -48,38 +48,38 @@ finratioanalysis_mcp"` works.
 **Purpose**: Core infrastructure every tool depends on. Must complete before
 any user story tasks.
 
-- [ ] **T005** [P] [FND] Implement `finratioanalysis_mcp/config.py` —
+- [x] **T005** [P] [FND] Implement `finratioanalysis_mcp/config.py` —
   Pydantic `Settings` model reading `FINRATIO_MCP_LOG_LEVEL`,
   `FINRATIO_MCP_TIMEOUT_SECONDS`, `FINRATIO_MCP_DEFAULT_FREQ`,
   `FINRATIO_MCP_CACHE_TTL_SECONDS` with defaults per research D9.
-- [ ] **T006** [P] [FND] Implement `finratioanalysis_mcp/errors.py` —
+- [x] **T006** [P] [FND] Implement `finratioanalysis_mcp/errors.py` —
   `MCPError` exception + `ErrorCode` enum (`INVALID_TICKER`, `UNSUPPORTED_FREQ`,
   `DATA_UNAVAILABLE`, `UPSTREAM_ERROR`, `INTERNAL_ERROR`) + `error_response()`
   helper producing the `ErrorResponse` dict shape from data-model.md.
-- [ ] **T007** [P] [FND] Implement `finratioanalysis_mcp/models.py` — Pydantic
+- [x] **T007** [P] [FND] Implement `finratioanalysis_mcp/models.py` — Pydantic
   v2 `TickerRequest` base (ticker regex, freq enum, response_format enum) per
   data-model.md §Shared input models.
-- [ ] **T008** [FND] Implement `finratioanalysis_mcp/adapters.py` —
+- [x] **T008** [FND] Implement `finratioanalysis_mcp/adapters.py` —
   `df_to_period_rows(df) -> list[dict]`, `df_to_snapshot(df) -> dict` with
   `NaN→None` and ISO-8601 date rendering; plus `to_markdown_table(rows)` and
   `to_markdown_kv(snapshot)` for `response_format="markdown"` (research D6).
   Depends on T007.
-- [ ] **T009** [FND] Implement `finratioanalysis_mcp/server.py` — FastMCP
+- [x] **T009** [FND] Implement `finratioanalysis_mcp/server.py` — FastMCP
   instance `mcp = FastMCP("finratioanalysis_mcp")`, a `main()` that wires
   config + logging and runs `mcp.run()` on stdio, and a `_call_library(ticker,
   freq, method_name)` dispatcher that instantiates `FinRatioAnalysis` once and
   translates library exceptions to `MCPError`. Depends on T005, T006, T007.
-- [ ] **T010** [FND] Implement `finratioanalysis_mcp/__main__.py` — thin
+- [x] **T010** [FND] Implement `finratioanalysis_mcp/__main__.py` — thin
   `from .server import main; main()` module entry point. Depends on T009.
-- [ ] **T011** [P] [FND] `tests_mcp/conftest.py` — pytest fixtures for a
+- [x] **T011** [P] [FND] `tests_mcp/conftest.py` — pytest fixtures for a
   mocked `FinRatioAnalysis` class yielding canned DataFrames (one per method),
   plus a fixture returning a running FastMCP server (in-process).
-- [ ] **T012** [P] [FND] `tests_mcp/test_adapters.py` — unit tests for
+- [x] **T012** [P] [FND] `tests_mcp/test_adapters.py` — unit tests for
   `df_to_period_rows` (ISO date, NaN→null, column preservation) and
   `df_to_snapshot`; Markdown renderers produce well-formed tables.
-- [ ] **T013** [P] [FND] `tests_mcp/test_errors.py` — each `ErrorCode` maps to
+- [x] **T013** [P] [FND] `tests_mcp/test_errors.py` — each `ErrorCode` maps to
   the correct response shape; `MCPError` never leaks a stack trace.
-- [ ] **T014** [P] [FND] `tests_mcp/test_server_boot.py` — import
+- [x] **T014** [P] [FND] `tests_mcp/test_server_boot.py` — import
   `finratioanalysis_mcp.server`, assert `FastMCP` instance name and that
   `main()` is callable.
 
@@ -100,35 +100,38 @@ matching `contracts/*.json` output schema.
 
 ### Contract tests for US1 (write FIRST, must FAIL before implementation)
 
-- [ ] **T015** [P] [US1] `tests_mcp/test_tool_contracts.py` — parametrized
+- [x] **T015** [P] [US1] `tests_mcp/test_tool_contracts.py` — parametrized
   test that loads every `specs/001-mcp-server/contracts/*.json`, invokes the
   corresponding tool with a mocked ticker, and validates the response against
   the contract's `output` schema using `jsonschema`.
 
 ### Implementation for US1 — tools (all parallel; each tool lives in its own file)
 
-- [ ] **T016** [P] [US1] `finratioanalysis_mcp/tools/return_ratios.py` —
+- [x] **T016** [P] [US1] `finratioanalysis_mcp/tools/return_ratios.py` —
   register `finratio_return_ratios` with description, annotations (readOnly,
   idempotent, openWorld), dispatch to library `return_ratios()`, serialize via
   `adapters.df_to_period_rows`. Depends on T008, T009.
-- [ ] **T017** [P] [US1] `finratioanalysis_mcp/tools/efficiency_ratios.py` —
+- [x] **T017** [P] [US1] `finratioanalysis_mcp/tools/efficiency_ratios.py` —
   `finratio_efficiency_ratios`.
-- [ ] **T018** [P] [US1] `finratioanalysis_mcp/tools/leverage_ratios.py` —
+- [x] **T018** [P] [US1] `finratioanalysis_mcp/tools/leverage_ratios.py` —
   `finratio_leverage_ratios`.
-- [ ] **T019** [P] [US1] `finratioanalysis_mcp/tools/liquidity_ratios.py` —
+- [x] **T019** [P] [US1] `finratioanalysis_mcp/tools/liquidity_ratios.py` —
   `finratio_liquidity_ratios`.
-- [ ] **T020** [P] [US1] `finratioanalysis_mcp/tools/ccc.py` — `finratio_ccc`.
-- [ ] **T021** [P] [US1] `finratioanalysis_mcp/tools/historical_valuation_metrics.py`
+- [x] **T020** [P] [US1] `finratioanalysis_mcp/tools/ccc.py` — `finratio_ccc`.
+- [x] **T021** [P] [US1] `finratioanalysis_mcp/tools/historical_valuation_metrics.py`
   — `finratio_historical_valuation_metrics`.
-- [ ] **T022** [P] [US1] `finratioanalysis_mcp/tools/valuation_growth_metrics.py`
+- [x] **T022** [P] [US1] `finratioanalysis_mcp/tools/valuation_growth_metrics.py`
   — `finratio_valuation_growth_metrics` (snapshot shape).
-- [ ] **T023** [P] [US1] `finratioanalysis_mcp/tools/z_score.py` —
+  **NOTE (Option B shim):** Library's `valuation_growth_metrics()` is the only snapshot method without a `Symbol` column. Adapter MUST inject it:
+  `row = df.iloc[0].to_dict(); return {"data": {"Symbol": ticker, **row}}`.
+  Contract requires `Symbol`; mock fixture does NOT include it — the injection is what makes the contract test pass. Add a comment flagging this as a shim for upstream library inconsistency (removable if the library is ever fixed). Do NOT normalize column casing.
+- [x] **T023** [P] [US1] `finratioanalysis_mcp/tools/z_score.py` —
   `finratio_z_score` (snapshot; `z_score_plot` NOT exposed).
-- [ ] **T024** [P] [US1] `finratioanalysis_mcp/tools/capm.py` —
+- [x] **T024** [P] [US1] `finratioanalysis_mcp/tools/capm.py` —
   `finratio_capm`.
-- [ ] **T025** [P] [US1] `finratioanalysis_mcp/tools/wacc.py` —
+- [x] **T025** [P] [US1] `finratioanalysis_mcp/tools/wacc.py` —
   `finratio_wacc`.
-- [ ] **T026** [US1] `finratioanalysis_mcp/tools/__init__.py` — import every
+- [x] **T026** [US1] `finratioanalysis_mcp/tools/__init__.py` — import every
   tool module so FastMCP registers them at server startup. Depends on
   T016–T025.
 
@@ -148,7 +151,7 @@ matching `contracts/*.json` output schema.
 
 ### Markdown rendering for US1 (FR-013)
 
-- [ ] **T037** [US1] Extend each tool to honor `response_format="markdown"`
+- [x] **T037** [US1] Extend each tool to honor `response_format="markdown"`
   by routing through `adapters.to_markdown_table` /
   `adapters.to_markdown_kv`. Single-commit cross-file edit touching all 10
   tools. Depends on T016–T025.

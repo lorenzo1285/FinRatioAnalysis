@@ -3,7 +3,7 @@ name = "FinRatioAnalysis"
 version = "0.2.1"
 description = "Quantitative Finance Ratio Analysis with VCG (Value, Quality, Growth) Metrics"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.10"
 authors = [
     { name = "Lorenzo Cárdenas Cárdenas", email = "lorenzo_cardenas@msn.com" }
 ]
@@ -14,7 +14,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Financial and Insurance Industry",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
