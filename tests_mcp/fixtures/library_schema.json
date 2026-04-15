@@ -1,0 +1,112 @@
+{
+  "return_ratios": {
+    "kind": "timeseries",
+    "columns": [
+      "ROE",
+      "ROA",
+      "ROCE",
+      "ROIC",
+      "GrossMargin",
+      "OperatingMargin",
+      "NetProfit"
+    ],
+    "index_name": null
+  },
+  "efficiency_ratios": {
+    "kind": "timeseries",
+    "columns": [
+      "AssetTurnover",
+      "ReceivableTurnover",
+      "InventoryTurnover",
+      "FixedAssetTurnover",
+      "FCF_Margin",
+      "ReinvestmentRate"
+    ],
+    "index_name": null
+  },
+  "leverage_ratios": {
+    "kind": "timeseries",
+    "columns": [
+      "DebtEquityRatio",
+      "EquityRatio",
+      "DebtRatio"
+    ],
+    "index_name": null
+  },
+  "liquidity_ratios": {
+    "kind": "timeseries",
+    "columns": [
+      "CurrentRatios",
+      "QuickRatio",
+      "CashRatio",
+      "DIR",
+      "TIE",
+      "TIE_CB",
+      "CAPEX_OpCash",
+      "OpCashFlow"
+    ],
+    "index_name": null
+  },
+  "ccc": {
+    "kind": "timeseries",
+    "columns": [
+      "DIO",
+      "DSO",
+      "DPO",
+      "CCC"
+    ],
+    "index_name": null
+  },
+  "historical_valuation_metrics": {
+    "kind": "timeseries",
+    "columns": [
+      "Market_Cap",
+      "PE_Ratio",
+      "EV_EBITDA",
+      "FCF_Yield"
+    ],
+    "index_name": null
+  },
+  "valuation_growth_metrics": {
+    "kind": "snapshot",
+    "columns": [
+      "dividend_yield",
+      "payout_ratio",
+      "pe_ratio",
+      "forward_pe",
+      "ps_ratio",
+      "beta",
+      "ev_ebitda",
+      "fcf_yield",
+      "revenue_cagr_3y",
+      "net_income_cagr_3y"
+    ],
+    "index_name": null
+  },
+  "z_score": {
+    "kind": "snapshot",
+    "columns": [
+      "Symbol",
+      "Z Score",
+      "Zone"
+    ],
+    "index_name": null
+  },
+  "capm": {
+    "kind": "snapshot",
+    "columns": [
+      "Symbol",
+      "CAPM",
+      "Sharpe"
+    ],
+    "index_name": null
+  },
+  "wacc": {
+    "kind": "snapshot",
+    "columns": [
+      "Symbol",
+      "WACC"
+    ],
+    "index_name": null
+  }
+}
