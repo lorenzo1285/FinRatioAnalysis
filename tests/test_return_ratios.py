@@ -79,8 +79,8 @@ class TestReturnRatios:
     def test_return_ratios_has_time_series(self, analyzer):
         """Test that result has multiple time periods."""
         result = analyzer.return_ratios()
-        # Mock data has 3 periods
-        assert len(result.columns) == 6
+        # Mock data has 3 periods, now includes ROIC (7 columns total)
+        assert len(result.columns) == 7
     
     def test_backward_compatibility(self, analyzer):
         """Test that old ReturnRatios method still works."""
