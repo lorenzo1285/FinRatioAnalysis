@@ -1,0 +1,562 @@
+{
+  "name": "finratio_company_snapshot",
+  "description": "Aggregate one-call fundamentals snapshot: returns every ratio family (return, efficiency, leverage, liquidity, ccc, valuation_growth, historical_valuation, z_score, capm, wacc) for a ticker in a single response. Sections that fail individually report a per-section error without aborting the whole response.",
+  "annotations": {
+    "readOnlyHint": true,
+    "destructiveHint": false,
+    "idempotentHint": true,
+    "openWorldHint": true
+  },
+  "input": {
+    "type": "object",
+    "properties": {
+      "ticker": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10,
+        "pattern": "^[A-Z0-9.\\-]+$",
+        "description": "Upper-case ticker symbol (e.g., AAPL, BRK-B)."
+      },
+      "freq": {
+        "type": "string",
+        "enum": [
+          "yearly",
+          "quarterly"
+        ],
+        "default": "yearly"
+      },
+      "response_format": {
+        "type": "string",
+        "enum": [
+          "json",
+          "markdown"
+        ],
+        "default": "json"
+      }
+    },
+    "required": [
+      "ticker"
+    ],
+    "additionalProperties": false
+  },
+  "output": {
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "ticker": {
+            "type": "string"
+          },
+          "freq": {
+            "type": "string",
+            "enum": [
+              "yearly",
+              "quarterly"
+            ]
+          },
+          "sections": {
+            "type": "object",
+            "properties": {
+              "return_ratios": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "data": {},
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "INVALID_TICKER",
+                          "UNSUPPORTED_FREQ",
+                          "DATA_UNAVAILABLE",
+                          "UPSTREAM_ERROR",
+                          "INTERNAL_ERROR"
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "efficiency_ratios": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "data": {},
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "INVALID_TICKER",
+                          "UNSUPPORTED_FREQ",
+                          "DATA_UNAVAILABLE",
+                          "UPSTREAM_ERROR",
+                          "INTERNAL_ERROR"
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "leverage_ratios": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "data": {},
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "INVALID_TICKER",
+                          "UNSUPPORTED_FREQ",
+                          "DATA_UNAVAILABLE",
+                          "UPSTREAM_ERROR",
+                          "INTERNAL_ERROR"
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "liquidity_ratios": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "data": {},
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "INVALID_TICKER",
+                          "UNSUPPORTED_FREQ",
+                          "DATA_UNAVAILABLE",
+                          "UPSTREAM_ERROR",
+                          "INTERNAL_ERROR"
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "ccc": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "data": {},
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "INVALID_TICKER",
+                          "UNSUPPORTED_FREQ",
+                          "DATA_UNAVAILABLE",
+                          "UPSTREAM_ERROR",
+                          "INTERNAL_ERROR"
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "valuation_growth_metrics": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "data": {},
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "INVALID_TICKER",
+                          "UNSUPPORTED_FREQ",
+                          "DATA_UNAVAILABLE",
+                          "UPSTREAM_ERROR",
+                          "INTERNAL_ERROR"
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "historical_valuation_metrics": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "data": {},
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "INVALID_TICKER",
+                          "UNSUPPORTED_FREQ",
+                          "DATA_UNAVAILABLE",
+                          "UPSTREAM_ERROR",
+                          "INTERNAL_ERROR"
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "z_score": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "data": {},
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "INVALID_TICKER",
+                          "UNSUPPORTED_FREQ",
+                          "DATA_UNAVAILABLE",
+                          "UPSTREAM_ERROR",
+                          "INTERNAL_ERROR"
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "capm": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "data": {},
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "INVALID_TICKER",
+                          "UNSUPPORTED_FREQ",
+                          "DATA_UNAVAILABLE",
+                          "UPSTREAM_ERROR",
+                          "INTERNAL_ERROR"
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              },
+              "wacc": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ok",
+                      "error"
+                    ]
+                  },
+                  "data": {},
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "enum": [
+                          "INVALID_TICKER",
+                          "UNSUPPORTED_FREQ",
+                          "DATA_UNAVAILABLE",
+                          "UPSTREAM_ERROR",
+                          "INTERNAL_ERROR"
+                        ]
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "details": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "code",
+                      "message"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              }
+            },
+            "required": [
+              "return_ratios",
+              "efficiency_ratios",
+              "leverage_ratios",
+              "liquidity_ratios",
+              "ccc",
+              "valuation_growth_metrics",
+              "historical_valuation_metrics",
+              "z_score",
+              "capm",
+              "wacc"
+            ]
+          }
+        },
+        "required": [
+          "ticker",
+          "freq",
+          "sections"
+        ]
+      },
+      {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "INVALID_TICKER",
+              "UNSUPPORTED_FREQ",
+              "DATA_UNAVAILABLE",
+              "UPSTREAM_ERROR",
+              "INTERNAL_ERROR"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }
+}
