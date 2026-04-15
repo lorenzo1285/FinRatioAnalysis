@@ -92,3 +92,7 @@ PUBLISHING.md
 QUICK_PUBLISH.md
 TESTING.md
 VERSION_MANAGEMENT.md
+
+# Agent configuration
+.claude/
+.specify/
