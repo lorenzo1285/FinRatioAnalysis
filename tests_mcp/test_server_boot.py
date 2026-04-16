@@ -34,3 +34,29 @@ class TestServerBoot:
         assert hasattr(server, 'mcp')
         assert hasattr(server, 'main')
         assert hasattr(server, '_call_library')
+
+    def test_tools_registered_on_server_import(self):
+        """Importing only the server module must register all 10 US1 tools.
+
+        Guards against a regression where tool registration depended on a
+        side-effect import in test files instead of the server boot path —
+        which would leave MCP Inspector showing zero tools in production.
+        """
+        import asyncio
+
+        tools = asyncio.run(mcp.list_tools())
+        names = {t.name for t in tools}
+
+        expected = {
+            "finratio_return_ratios",
+            "finratio_efficiency_ratios",
+            "finratio_leverage_ratios",
+            "finratio_liquidity_ratios",
+            "finratio_ccc",
+            "finratio_historical_valuation_metrics",
+            "finratio_valuation_growth_metrics",
+            "finratio_z_score",
+            "finratio_capm",
+            "finratio_wacc",
+        }
+        assert names == expected, f"Tool registry mismatch: {names ^ expected}"

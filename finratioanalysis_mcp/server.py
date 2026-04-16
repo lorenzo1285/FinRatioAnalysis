@@ -171,3 +171,11 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+# Import tools package last so @mcp.tool() decorators fire at boot. Placed at
+# the end of this module to avoid a circular import: tool modules import
+# `_call_library` and `mcp` from here, which must already be defined.
+# Without this the server would start with zero tools on the real entry point
+# — the test suite masked it because test files import individual tools directly.
+from finratioanalysis_mcp import tools as _tools  # noqa: F401, E402
