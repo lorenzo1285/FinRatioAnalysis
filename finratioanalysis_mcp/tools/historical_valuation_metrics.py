@@ -6,6 +6,7 @@ Exposes FinRatioAnalysis.historical_valuation_metrics() as an MCP tool.
 from typing import Any, Dict
 
 from finratioanalysis_mcp.adapters import df_to_period_rows, to_markdown_table
+from finratioanalysis_mcp.errors import MCPError, error_response
 from finratioanalysis_mcp.models import TickerRequest
 from finratioanalysis_mcp.server import _call_library, mcp
 
@@ -31,27 +32,38 @@ def finratio_historical_valuation_metrics(
     
     Returns:
         Dictionary with 'data' key containing list of period rows, or error response.
+    
+    Error Codes:
+        INVALID_TICKER: Ticker format invalid (must match [A-Z0-9.\\-]+)
+        UNSUPPORTED_FREQ: Frequency not 'yearly' or 'quarterly'
+        DATA_UNAVAILABLE: No data returned for this ticker/frequency
+        UPSTREAM_ERROR: Network/connection issue with Yahoo Finance
+        INTERNAL_ERROR: Unexpected error during processing
     """
-    # Validate input via Pydantic model
-    request = TickerRequest(
-        ticker=ticker,
-        freq=freq,  # type: ignore
-        response_format=response_format,  # type: ignore
-    )
+    try:
+        # Validate input via Pydantic model
+        request = TickerRequest(
+            ticker=ticker,
+            freq=freq,  # type: ignore
+            response_format=response_format,  # type: ignore
+        )
+        
+        # Call library method
+        df = _call_library(
+            ticker=request.ticker,
+            freq=request.freq,
+            method_name="historical_valuation_metrics",
+        )
+        
+        # Serialize to period rows
+        rows = df_to_period_rows(df)
+        
+        # Handle markdown format
+        if request.response_format == "markdown":
+            markdown = to_markdown_table(rows)
+            return {"data": markdown}
+        
+        return {"data": rows}
     
-    # Call library method
-    df = _call_library(
-        ticker=request.ticker,
-        freq=request.freq,
-        method_name="historical_valuation_metrics",
-    )
-    
-    # Serialize to period rows
-    rows = df_to_period_rows(df)
-    
-    # Handle markdown format
-    if request.response_format == "markdown":
-        markdown = to_markdown_table(rows)
-        return {"data": markdown}
-    
-    return {"data": rows}
+    except MCPError as e:
+        return error_response(e)

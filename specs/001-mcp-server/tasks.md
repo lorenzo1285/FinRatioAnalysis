@@ -137,17 +137,17 @@ matching `contracts/*.json` output schema.
 
 ### Unit tests for US1 (one per tool)
 
-- [ ] **T027** [P] [US1] `tests_mcp/tools/test_return_ratios.py` — happy-path
+- [x] **T027** [P] [US1] `tests_mcp/tools/test_return_ratios.py` — happy-path
   with mocked fixture; assert output shape + column set.
-- [ ] **T028** [P] [US1] `tests_mcp/tools/test_efficiency_ratios.py`.
-- [ ] **T029** [P] [US1] `tests_mcp/tools/test_leverage_ratios.py`.
-- [ ] **T030** [P] [US1] `tests_mcp/tools/test_liquidity_ratios.py`.
-- [ ] **T031** [P] [US1] `tests_mcp/tools/test_ccc.py`.
-- [ ] **T032** [P] [US1] `tests_mcp/tools/test_historical_valuation_metrics.py`.
-- [ ] **T033** [P] [US1] `tests_mcp/tools/test_valuation_growth_metrics.py`.
-- [ ] **T034** [P] [US1] `tests_mcp/tools/test_z_score.py`.
-- [ ] **T035** [P] [US1] `tests_mcp/tools/test_capm.py`.
-- [ ] **T036** [P] [US1] `tests_mcp/tools/test_wacc.py`.
+- [x] **T028** [P] [US1] `tests_mcp/tools/test_efficiency_ratios.py`.
+- [x] **T029** [P] [US1] `tests_mcp/tools/test_leverage_ratios.py`.
+- [x] **T030** [P] [US1] `tests_mcp/tools/test_liquidity_ratios.py`.
+- [x] **T031** [P] [US1] `tests_mcp/tools/test_ccc.py`.
+- [x] **T032** [P] [US1] `tests_mcp/tools/test_historical_valuation_metrics.py`.
+- [x] **T033** [P] [US1] `tests_mcp/tools/test_valuation_growth_metrics.py`.
+- [x] **T034** [P] [US1] `tests_mcp/tools/test_z_score.py`.
+- [x] **T035** [P] [US1] `tests_mcp/tools/test_capm.py`.
+- [x] **T036** [P] [US1] `tests_mcp/tools/test_wacc.py`.
 
 ### Markdown rendering for US1 (FR-013)
 
@@ -155,7 +155,7 @@ matching `contracts/*.json` output schema.
   by routing through `adapters.to_markdown_table` /
   `adapters.to_markdown_kv`. Single-commit cross-file edit touching all 10
   tools. Depends on T016–T025.
-- [ ] **T038** [P] [US1] `tests_mcp/test_markdown_format.py` — one
+- [x] **T038** [P] [US1] `tests_mcp/test_markdown_format.py` — one
   parametrized test per tool verifying Markdown output is non-empty and
   contains the expected column headers.
 

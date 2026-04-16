@@ -6,6 +6,7 @@ Exposes FinRatioAnalysis.wacc() as an MCP tool.
 from typing import Any, Dict
 
 from finratioanalysis_mcp.adapters import df_to_snapshot, to_markdown_kv
+from finratioanalysis_mcp.errors import MCPError, error_response
 from finratioanalysis_mcp.models import TickerRequest
 from finratioanalysis_mcp.server import _call_library, mcp
 
@@ -31,27 +32,38 @@ def finratio_wacc(
     
     Returns:
         Dictionary with 'data' key containing snapshot object, or error response.
+    
+    Error Codes:
+        INVALID_TICKER: Ticker format invalid (must match [A-Z0-9.\\-]+)
+        UNSUPPORTED_FREQ: Frequency not 'yearly' or 'quarterly'
+        DATA_UNAVAILABLE: No data returned for this ticker/frequency
+        UPSTREAM_ERROR: Network/connection issue with Yahoo Finance
+        INTERNAL_ERROR: Unexpected error during processing
     """
-    # Validate input via Pydantic model
-    request = TickerRequest(
-        ticker=ticker,
-        freq=freq,  # type: ignore
-        response_format=response_format,  # type: ignore
-    )
+    try:
+        # Validate input via Pydantic model
+        request = TickerRequest(
+            ticker=ticker,
+            freq=freq,  # type: ignore
+            response_format=response_format,  # type: ignore
+        )
+        
+        # Call library method
+        df = _call_library(
+            ticker=request.ticker,
+            freq=request.freq,
+            method_name="wacc",
+        )
+        
+        # Serialize to snapshot
+        snapshot = df_to_snapshot(df)
+        
+        # Handle markdown format
+        if request.response_format == "markdown":
+            markdown = to_markdown_kv(snapshot)
+            return {"data": markdown}
+        
+        return {"data": snapshot}
     
-    # Call library method
-    df = _call_library(
-        ticker=request.ticker,
-        freq=request.freq,
-        method_name="wacc",
-    )
-    
-    # Serialize to snapshot
-    snapshot = df_to_snapshot(df)
-    
-    # Handle markdown format
-    if request.response_format == "markdown":
-        markdown = to_markdown_kv(snapshot)
-        return {"data": markdown}
-    
-    return {"data": snapshot}
+    except MCPError as e:
+        return error_response(e)
