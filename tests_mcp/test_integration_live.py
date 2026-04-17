@@ -133,7 +133,7 @@ class TestLiveIntegration:
             data = result["data"]
             assert "Symbol" in data
             assert data["Symbol"] == ticker
-            assert "Revenue_Growth_3Y_CAGR" in data or "revenue_cagr_3y" in data
+            assert "Revenue_Growth_3Y_CAGR" in data
             
             print(f"✓ {ticker}: valuation growth metrics OK")
     
