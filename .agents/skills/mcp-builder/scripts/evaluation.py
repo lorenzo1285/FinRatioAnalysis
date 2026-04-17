@@ -107,32 +107,43 @@ async def agent_loop(
     tool_metrics = {}
 
     while response.stop_reason == "tool_use":
-        tool_use = next(block for block in response.content if block.type == "tool_use")
-        tool_name = tool_use.name
-        tool_input = tool_use.input
+        tool_uses = [block for block in response.content if block.type == "tool_use"]
+        tool_results = []
 
-        tool_start_ts = time.time()
-        try:
-            tool_result = await connection.call_tool(tool_name, tool_input)
-            tool_response = json.dumps(tool_result) if isinstance(tool_result, (dict, list)) else str(tool_result)
-        except Exception as e:
-            tool_response = f"Error executing tool {tool_name}: {str(e)}\n"
-            tool_response += traceback.format_exc()
-        tool_duration = time.time() - tool_start_ts
+        for tool_use in tool_uses:
+            tool_name = tool_use.name
+            tool_input = tool_use.input
 
-        if tool_name not in tool_metrics:
-            tool_metrics[tool_name] = {"count": 0, "durations": []}
-        tool_metrics[tool_name]["count"] += 1
-        tool_metrics[tool_name]["durations"].append(tool_duration)
+            tool_start_ts = time.time()
+            try:
+                tool_result = await connection.call_tool(tool_name, tool_input)
+                # call_tool returns a list of TextContent objects — extract text
+                if isinstance(tool_result, list):
+                    tool_response = "\n".join(
+                        item.text if hasattr(item, "text") else str(item)
+                        for item in tool_result
+                    )
+                elif isinstance(tool_result, (dict, list)):
+                    tool_response = json.dumps(tool_result)
+                else:
+                    tool_response = str(tool_result)
+            except Exception as e:
+                tool_response = f"Error executing tool {tool_name}: {str(e)}\n"
+                tool_response += traceback.format_exc()
+            tool_duration = time.time() - tool_start_ts
 
-        messages.append({
-            "role": "user",
-            "content": [{
+            if tool_name not in tool_metrics:
+                tool_metrics[tool_name] = {"count": 0, "durations": []}
+            tool_metrics[tool_name]["count"] += 1
+            tool_metrics[tool_name]["durations"].append(tool_duration)
+
+            tool_results.append({
                 "type": "tool_result",
                 "tool_use_id": tool_use.id,
                 "content": tool_response,
-            }]
-        })
+            })
+
+        messages.append({"role": "user", "content": tool_results})
 
         response = await asyncio.to_thread(
             client.messages.create,
@@ -175,7 +186,7 @@ async def evaluate_single_task(
         "question": qa_pair["question"],
         "expected": qa_pair["answer"],
         "actual": response_value,
-        "score": int(response_value == qa_pair["answer"]) if response_value else 0,
+        "score": int((response_value or "").strip().splitlines()[0].strip() == qa_pair["answer"]) if response_value else 0,
         "total_duration": duration_seconds,
         "tool_calls": tool_metrics,
         "num_tool_calls": sum(len(metrics["durations"]) for metrics in tool_metrics.values()),
@@ -220,18 +231,18 @@ TASK_TEMPLATE = """
 async def run_evaluation(
     eval_path: Path,
     connection: Any,
-    model: str = "claude-3-7-sonnet-20250219",
+    model: str = "claude-haiku-4-5",
 ) -> str:
     """Run evaluation with MCP server tools."""
-    print("🚀 Starting Evaluation")
+    print("[START] Starting Evaluation")
 
     client = Anthropic()
 
     tools = await connection.list_tools()
-    print(f"📋 Loaded {len(tools)} tools from MCP server")
+    print(f"[INFO] Loaded {len(tools)} tools from MCP server")
 
     qa_pairs = parse_evaluation_file(eval_path)
-    print(f"📋 Loaded {len(qa_pairs)} evaluation tasks")
+    print(f"[INFO] Loaded {len(qa_pairs)} evaluation tasks")
 
     results = []
     for i, qa_pair in enumerate(qa_pairs):
@@ -260,7 +271,7 @@ async def run_evaluation(
             question=qa_pair["question"],
             expected_answer=qa_pair["answer"],
             actual_answer=result["actual"] or "N/A",
-            correct_indicator="✅" if result["score"] else "❌",
+            correct_indicator="[PASS]" if result["score"] else "[FAIL]",
             total_duration=result["total_duration"],
             tool_calls=json.dumps(result["tool_calls"], indent=2),
             summary=result["summary"] or "N/A",
@@ -315,13 +326,13 @@ Examples:
   python evaluation.py -t sse -u https://example.com/mcp -H "Authorization: Bearer token" eval.xml
 
   # Evaluate an HTTP MCP server with custom model
-  python evaluation.py -t http -u https://example.com/mcp -m claude-3-5-sonnet-20241022 eval.xml
+  python evaluation.py -t http -u https://example.com/mcp -m claude-sonnet-4-6 eval.xml
         """,
     )
 
     parser.add_argument("eval_file", type=Path, help="Path to evaluation XML file")
     parser.add_argument("-t", "--transport", choices=["stdio", "sse", "http"], default="stdio", help="Transport type (default: stdio)")
-    parser.add_argument("-m", "--model", default="claude-3-7-sonnet-20250219", help="Claude model to use (default: claude-3-7-sonnet-20250219)")
+    parser.add_argument("-m", "--model", default="claude-haiku-4-5", help="Claude model to use (default: claude-haiku-4-5 - fastest and cheapest)")
 
     stdio_group = parser.add_argument_group("stdio options")
     stdio_group.add_argument("-c", "--command", help="Command to run MCP server (stdio only)")
@@ -356,15 +367,15 @@ Examples:
         print(f"Error: {e}")
         sys.exit(1)
 
-    print(f"🔗 Connecting to MCP server via {args.transport}...")
+    print(f"[INFO] Connecting to MCP server via {args.transport}...")
 
     async with connection:
-        print("✅ Connected successfully")
+        print("[OK] Connected successfully")
         report = await run_evaluation(args.eval_file, connection, args.model)
 
         if args.output:
             args.output.write_text(report)
-            print(f"\n✅ Report saved to {args.output}")
+            print(f"\n[OK] Report saved to {args.output}")
         else:
             print("\n" + report)
 
