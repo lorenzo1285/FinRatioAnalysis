@@ -4,6 +4,8 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP Support](https://img.shields.io/badge/MCP-Enabled-purple.svg)](https://modelcontextprotocol.io)
+[![Downloads](https://static.pepy.tech/badge/finratioanalysis)](https://pepy.tech/project/finratioanalysis)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/FinRatioAnalysis)](https://pypi.org/project/FinRatioAnalysis/)
 
 A comprehensive Python package for financial ratio analysis and fundamental analysis of publicly traded companies using real-time data from Yahoo Finance.
 

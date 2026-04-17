@@ -1,6 +1,6 @@
 [project]
 name = "FinRatioAnalysis"
-version = "0.2.2"
+version = "0.2.3"
 description = "Quantitative Finance Ratio Analysis with VCG (Value, Quality, Growth) Metrics and MCP Server Support"
 readme = "README.md"
 requires-python = ">=3.10"
