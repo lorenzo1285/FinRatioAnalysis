@@ -4,10 +4,14 @@ Verifies that invalid freq values are rejected at the Pydantic boundary
 with clear validation error messages per US2 scenario 3.
 """
 
+from unittest.mock import patch
+
 import pytest
 from pydantic import ValidationError
 
+from finratioanalysis_mcp.errors import ErrorCode
 from finratioanalysis_mcp.models import TickerRequest
+from finratioanalysis_mcp.tools.return_ratios import finratio_return_ratios
 
 
 def test_unsupported_freq_rejected():
@@ -61,6 +65,38 @@ def test_invalid_response_format_rejected():
     # Should have error about response_format field
     format_errors = [e for e in errors if 'response_format' in str(e.get('loc', []))]
     assert len(format_errors) > 0, "Should have validation error for 'response_format' field"
+
+
+def test_unsupported_freq_at_tool_boundary():
+    """The spec says 'at the MCP boundary' — call the tool, not the model.
+
+    If the tool's try/except only catches MCPError, Pydantic's ValidationError
+    escapes and the MCP client gets an unstructured crash instead of a clean
+    UNSUPPORTED_FREQ ErrorResponse.
+    """
+    with patch("finratioanalysis_mcp.server.FinRatioAnalysis"):
+        response = finratio_return_ratios(
+            ticker="AAPL",
+            freq="monthly",
+            response_format="json",
+        )
+
+    assert "code" in response, "Tool must return structured error, not raise"
+    assert response["code"] == ErrorCode.UNSUPPORTED_FREQ.value
+    assert "yearly" in response["message"].lower() or "quarterly" in response["message"].lower()
+
+
+def test_invalid_ticker_format_at_tool_boundary():
+    """Same boundary concern for ticker regex rejection."""
+    with patch("finratioanalysis_mcp.server.FinRatioAnalysis"):
+        response = finratio_return_ratios(
+            ticker="aapl$",
+            freq="yearly",
+            response_format="json",
+        )
+
+    assert "code" in response, "Tool must return structured error, not raise"
+    assert response["code"] == ErrorCode.INVALID_TICKER.value
 
 
 def test_error_message_clarity():

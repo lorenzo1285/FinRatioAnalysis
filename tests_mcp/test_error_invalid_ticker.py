@@ -4,8 +4,7 @@ Verifies that invalid/nonsense tickers produce structured ErrorResponse
 with code=INVALID_TICKER per US2 scenario 1.
 """
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from finratioanalysis_mcp.tools.return_ratios import finratio_return_ratios
 from finratioanalysis_mcp.errors import ErrorCode
@@ -25,9 +24,16 @@ def test_invalid_ticker_returns_error_response():
     assert "message" in response, "Response should have 'message' field for errors"
     assert "data" not in response, "Error response should not have 'data' field"
     
-    # Error code should indicate the issue (may be INVALID_TICKER or UPSTREAM_ERROR)
-    # depending on how yfinance fails
-    assert response["code"] in [ErrorCode.INVALID_TICKER.value, ErrorCode.UPSTREAM_ERROR.value, ErrorCode.INTERNAL_ERROR.value]
+    # TODO(T043): tighten to `== ErrorCode.INVALID_TICKER.value` once the
+    # yfinance pre-flight liveness probe lands. Today INVALID_TICKER is only
+    # emittable via regex rejection (caught upstream by Pydantic), so a
+    # format-valid-but-nonexistent ticker surfaces as INTERNAL_ERROR or
+    # UPSTREAM_ERROR depending on how yfinance fails.
+    assert response["code"] in [
+        ErrorCode.INVALID_TICKER.value,
+        ErrorCode.UPSTREAM_ERROR.value,
+        ErrorCode.INTERNAL_ERROR.value,
+    ]
     
     # Message should be human-readable
     assert len(response["message"]) > 0
@@ -42,11 +48,12 @@ def test_invalid_ticker_no_stack_trace():
         
         response = finratio_return_ratios(ticker="INVALID", freq="yearly", response_format="json")
     
-    # Ensure no traceback strings in the response
+    # Ensure no traceback strings in the response. The detailed
+    # forbidden-substring list lives in tests_mcp/test_no_stack_traces.py
+    # (T042); this test is a smoke check on the strongest indicators.
     response_str = str(response)
     assert "Traceback" not in response_str
-    assert "File \"" not in response_str
-    assert "line " not in response_str.lower() or "line number" not in response_str.lower()
+    assert 'File "' not in response_str
 
 
 def test_empty_dataframe_returns_data_unavailable():

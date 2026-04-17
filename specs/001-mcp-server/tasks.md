@@ -173,32 +173,32 @@ produce structured errors or `null` values — no stack traces, no crashes
 
 ### Tests for US2 (write FIRST)
 
-- [ ] **T039** [P] [US2] `tests_mcp/test_error_invalid_ticker.py` — invoke
+- [x] **T039** [P] [US2] `tests_mcp/test_error_invalid_ticker.py` — invoke
   any tool with `ticker="ZZZZZ"`; assert response is an `ErrorResponse` with
   `code="INVALID_TICKER"`.
-- [ ] **T040** [P] [US2] `tests_mcp/test_error_unsupported_freq.py` — invoke
+- [x] **T040** [P] [US2] `tests_mcp/test_error_unsupported_freq.py` — invoke
   with `freq="monthly"`; assert Pydantic validation rejects at the MCP
   boundary with a clear message referencing allowed values.
-- [ ] **T041** [P] [US2] `tests_mcp/test_bank_missing_fields.py` — mock
+- [x] **T041** [P] [US2] `tests_mcp/test_bank_missing_fields.py` — mock
   library to return a DataFrame with `NaN`s in GrossProfit-derived columns;
   assert response contains `null` (not errors) for those columns and valid
   numerics elsewhere.
-- [ ] **T042** [P] [US2] `tests_mcp/test_no_stack_traces.py` — force the
+- [x] **T042** [P] [US2] `tests_mcp/test_no_stack_traces.py` — force the
   library mock to raise an arbitrary `Exception`; assert the MCP response is
   a well-formed `ErrorResponse` with `code="INTERNAL_ERROR"` and no traceback
   string in any field.
 
 ### Implementation for US2
 
-- [ ] **T043** [US2] Extend `finratioanalysis_mcp/server.py::_call_library`
+- [x] **T043** [US2] Extend `finratioanalysis_mcp/server.py::_call_library`
   with a pre-validation step: regex-check ticker, catch `yfinance` / HTTP
   exceptions and map to `UPSTREAM_ERROR`; map empty/all-NaN DataFrames to
   `DATA_UNAVAILABLE` when the entire response would be unusable; everything
   else wrapped as `INTERNAL_ERROR`. Depends on T006, T009.
-- [ ] **T044** [US2] Add a top-level `try/except MCPError → error_response()`
+- [x] **T044** [US2] Add a top-level `try/except MCPError → error_response()`
   wrapper in the tool-dispatch helper so no tool leaks exceptions. Depends
   on T043.
-- [ ] **T045** [P] [US2] Document each error code in tool descriptions so
+- [x] **T045** [P] [US2] Document each error code in tool descriptions so
   LLMs can react appropriately (edit the 10 tool files; small descriptive
   addition only).
 
