@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from finratioanalysis_mcp.adapters import df_to_snapshot, to_markdown_kv
 from finratioanalysis_mcp.errors import MCPError, error_response
-from finratioanalysis_mcp.models import TickerRequest
+from finratioanalysis_mcp.models import parse_request
 from finratioanalysis_mcp.server import _call_library, mcp
 
 
@@ -43,7 +43,7 @@ def finratio_z_score(
     """
     try:
         # Validate input via Pydantic model
-        request = TickerRequest(
+        request = parse_request(
             ticker=ticker,
             freq=freq,  # type: ignore
             response_format=response_format,  # type: ignore
