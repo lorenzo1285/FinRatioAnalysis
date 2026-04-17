@@ -58,5 +58,6 @@ class TestServerBoot:
             "finratio_z_score",
             "finratio_capm",
             "finratio_wacc",
+            "finratio_company_snapshot",
         }
         assert names == expected, f"Tool registry mismatch: {names ^ expected}"

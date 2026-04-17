@@ -26,9 +26,6 @@ from finratioanalysis_mcp.server import mcp
 CONTRACTS_DIR = Path(__file__).parent.parent / "specs" / "001-mcp-server" / "contracts"
 CONTRACT_FILES = sorted(CONTRACTS_DIR.glob("*.json"))
 
-# Skip company_snapshot for now (US3, not US1)
-CONTRACT_FILES = [f for f in CONTRACT_FILES if f.stem != "finratio_company_snapshot"]
-
 
 def load_contract(contract_path: Path) -> Dict[str, Any]:
     """Load a contract JSON file."""
@@ -149,6 +146,7 @@ def test_all_contracts_discovered():
         "finratio_z_score",
         "finratio_capm",
         "finratio_wacc",
+        "finratio_company_snapshot",
     ]
     
     discovered = [f.stem for f in CONTRACT_FILES]

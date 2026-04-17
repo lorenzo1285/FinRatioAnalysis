@@ -215,20 +215,20 @@ per-section partial success (FR-001 bonus; spec US3 scenarios 1–2).
 
 ### Tests for US3 (write FIRST)
 
-- [ ] **T046** [P] [US3] `tests_mcp/tools/test_company_snapshot.py` —
+- [x] **T046** [P] [US3] `tests_mcp/tools/test_company_snapshot.py` —
   happy-path with all sections `status="ok"`; verify each section's `data`
   validates against the matching per-method contract.
-- [ ] **T047** [P] [US3] `tests_mcp/tools/test_company_snapshot_partial.py`
+- [x] **T047** [P] [US3] `tests_mcp/tools/test_company_snapshot_partial.py`
   — force CAPM to fail in the mock; assert `sections.capm.status="error"`
   with a valid `ErrorResponse` while all other sections remain `ok`.
 
 ### Implementation for US3
 
-- [ ] **T048** [US3] `finratioanalysis_mcp/tools/company_snapshot.py` —
+- [x] **T048** [US3] `finratioanalysis_mcp/tools/company_snapshot.py` —
   register `finratio_company_snapshot`; call all 10 per-method adapters
   inside try/except, assemble the `CompanySnapshot` shape per data-model.md.
   Depends on T026.
-- [ ] **T049** [US3] Import the new tool in `finratioanalysis_mcp/tools/__init__.py`.
+- [x] **T049** [US3] Import the new tool in `finratioanalysis_mcp/tools/__init__.py`.
   Depends on T048.
 
 **Checkpoint**: US3 complete. `finratio_company_snapshot` visible in MCP
