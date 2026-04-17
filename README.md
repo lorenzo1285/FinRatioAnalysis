@@ -1,6 +1,27 @@
 # FinRatioAnalysis
 
+[![PyPI version](https://badge.fury.io/py/FinRatioAnalysis.svg)](https://badge.fury.io/py/FinRatioAnalysis)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![MCP Support](https://img.shields.io/badge/MCP-Enabled-purple.svg)](https://modelcontextprotocol.io)
+
 A comprehensive Python package for financial ratio analysis and fundamental analysis of publicly traded companies using real-time data from Yahoo Finance.
+
+**🆕 Now with MCP Server Support** - Integrate financial analysis directly into Claude Desktop and other LLM applications!
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [MCP Server (LLM Integration)](#mcp-server-llm-integration)
+- [VCG (Value, Quality, Growth) Analysis](#vcg-value-quality-growth-analysis)
+- [API Reference](#api-reference)
+- [Examples](#example-analyzing-multiple-companies)
+- [Testing](#testing)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
@@ -56,8 +77,16 @@ A comprehensive Python package for financial ratio analysis and fundamental anal
 
 ## Installation
 
+### Standard Installation
+
 ```bash
 pip install FinRatioAnalysis
+```
+
+### With MCP Server Support (for LLM integration)
+
+```bash
+pip install "FinRatioAnalysis[mcp]"
 ```
 
 **Dependencies** (automatically installed):
@@ -117,6 +146,122 @@ print(capm)  # Expected Return, Sharpe Ratio
 # Weighted Average Cost of Capital
 wacc = apple.wacc()
 print(wacc)  # WACC percentage
+```
+
+## MCP Server (LLM Integration)
+
+🔌 **Model Context Protocol (MCP) Support** - FinRatioAnalysis now includes an optional MCP server that enables LLMs like Claude to perform financial analysis through natural language queries.
+
+### Available MCP Tools
+
+The MCP server exposes **11 financial analysis tools**:
+
+1. `finratio_return_ratios` - ROE, ROA, ROCE, ROIC, margins
+2. `finratio_efficiency_ratios` - Asset turnover, FCF margin, reinvestment rate
+3. `finratio_valuation_growth_metrics` - P/E, EV/EBITDA, FCF yield, CAGR
+4. `finratio_historical_valuation_metrics` - Time series of P/E, EV/EBITDA, FCF yield
+5. `finratio_leverage_ratios` - Debt-to-equity, equity ratio, debt ratio
+6. `finratio_liquidity_ratios` - Current ratio, quick ratio, cash ratio
+7. `finratio_ccc` - Cash Conversion Cycle (DIO, DSO, DPO)
+8. `finratio_z_score` - Altman Z-Score bankruptcy prediction
+9. `finratio_capm` - CAPM expected return and Sharpe ratio
+10. `finratio_wacc` - Weighted Average Cost of Capital
+11. `finratio_company_snapshot` - **All metrics in one call** (aggregate tool)
+
+### Quick Setup
+
+FinRatioAnalysis now includes an optional MCP (Model Context Protocol) server that enables LLMs like Claude to perform financial analysis through natural language:
+
+```bash
+# Install with MCP support
+pip install "FinRatioAnalysis[mcp]"
+
+# Start the MCP server (standalone mode)
+finratioanalysis-mcp
+# or
+python -m finratioanalysis_mcp
+```
+
+### Claude Desktop Integration
+
+**Use Cases:**
+- Ask Claude Desktop: *"What's Apple's ROIC trend over the last 4 years?"*
+- Natural language queries automatically invoke the right financial tools
+- Get fundamentals analysis without writing code
+
+**Quick Setup for Claude Desktop:**
+
+1. **Find your Claude Desktop config file:**
+   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+2. **Add the MCP server configuration:**
+
+```json
+{
+  "mcpServers": {
+    "finratioanalysis": {
+      "command": "python",
+      "args": ["-m", "finratioanalysis_mcp"],
+      "env": {
+        "FINRATIO_MCP_LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
+```
+
+**Alternative with `uv` (if you use uv for package management):**
+```json
+{
+  "mcpServers": {
+    "finratioanalysis": {
+      "command": "uv",
+      "args": ["run", "--with", "finratioanalysis[mcp]", "finratioanalysis-mcp"]
+    }
+  }
+}
+```
+
+3. **Restart Claude Desktop** completely (quit and reopen) and look for the 🔌 connector icon!
+
+**Example prompts to try:**
+- *"What's Apple's ROIC trend over the last 4 years?"*
+- *"Compare WACC across AAPL, MSFT, and GOOGL"*
+- *"Give me a full fundamentals snapshot of NVDA"*
+- *"Calculate the Altman Z-Score for Tesla and interpret the result"*
+- *"Show me the historical P/E ratio and EV/EBITDA for Microsoft"*
+- *"What's the Cash Conversion Cycle for Amazon?"*
+
+📚 For detailed setup instructions and troubleshooting, see the [MCP Quickstart Guide](specs/001-mcp-server/quickstart.md).
+
+### Advanced Configuration
+
+**Using `uv` package manager:**
+```json
+{
+  "mcpServers": {
+    "finratioanalysis": {
+      "command": "uv",
+      "args": ["run", "--with", "finratioanalysis[mcp]", "finratioanalysis-mcp"]
+    }
+  }
+}
+```
+
+**With local development directory:**
+```json
+{
+  "mcpServers": {
+    "finratioanalysis": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/FinRatioAnalysis", "python", "-m", "finratioanalysis_mcp"],
+      "env": {
+        "FINRATIO_MCP_LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
 ```
 
 ## VCG (Value, Quality, Growth) Analysis
@@ -301,18 +446,17 @@ pytest -m integration  # Real data tests only
 
 ## Documentation
 
-For detailed financial ratio formulas and interpretations:
-- [Example Notebook](example/example.ipynb) - Complete walkthrough of all features including VCG analysis
-- [CFI Financial Ratios Cheat Sheet](https://corporatefinanceinstitute.com/assets/CFI-Financial-Ratios-Cheat-Sheet-eBook.pdf)
+### Examples and Guides
 
-## Version History
+- 📓 [**Python Library Examples**](example/example.ipynb) - Complete walkthrough of all features including VCG analysis
+- 🔌 [**MCP Server Examples**](example/example_mcp.ipynb) - Demonstration of all 11 MCP tools with live data
+- 📚 [**MCP Quickstart Guide**](specs/001-mcp-server/quickstart.md) - Claude Desktop setup and configuration
+- 📄 [**MCP Technical Spec**](specs/001-mcp-server/spec.md) - Detailed MCP implementation documentation
 
-**Latest Version:**
-- Added VCG (Value, Quality, Growth) metrics framework
-- New `historical_valuation_metrics()` method
-- Enhanced `return_ratios()` with ROIC
-- Enhanced `efficiency_ratios()` with FCF Margin and Reinvestment Rate
-- Enhanced `valuation_growth_metrics()` with EV/EBITDA and FCF Yield
+### Reference Materials
+
+- [CFI Financial Ratios Cheat Sheet](https://corporatefinanceinstitute.com/assets/CFI-Financial-Ratios-Cheat-Sheet-eBook.pdf) - Detailed formulas and interpretations
+- [Model Context Protocol](https://modelcontextprotocol.io) - Learn about MCP for LLM integration
 
 ## License
 
@@ -326,11 +470,48 @@ MIT License - See [LICENCE](LICENCE) file
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Here's how you can help:
+
+1. **Report bugs** - Open an issue on [GitHub Issues](https://github.com/lorenzo1285/FinRatioAnalysis/issues)
+2. **Suggest features** - Share your ideas for new ratios or metrics
+3. **Submit PRs** - Fork the repo, make your changes, and submit a pull request
+4. **Improve docs** - Help make the documentation clearer
+5. **Add tests** - Expand test coverage for edge cases
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/lorenzo1285/FinRatioAnalysis.git
+cd FinRatioAnalysis
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install in editable mode with dev dependencies
+pip install -e ".[mcp]"
+pip install pytest pytest-mock jsonschema
+
+# Run tests
+pytest
+pytest tests_mcp/  # MCP server tests
+```
+
+Please ensure all tests pass before submitting a PR!
 
 ## Changelog
 
-### Version 1.x (Latest)
+### Version 0.2.1 (April 2026) - Current Release
+
+**Major Features:**
+- 🆕 **MCP Server Support** - Enable LLM integration with Claude Desktop and other MCP clients
+  - 11 financial analysis tools exposed via Model Context Protocol
+  - Natural language querying of financial ratios
+  - Structured JSON and Markdown response formats
+  - See [CHANGELOG.md](CHANGELOG.md) for complete details
+
+**Enhancements:**
 - ✨ Added VCG (Value, Quality, Growth) analysis framework
 - ✨ New method: `historical_valuation_metrics()` - Time series P/E, EV/EBITDA, FCF Yield
 - ✨ Enhanced `return_ratios()` - Added ROIC (Return on Invested Capital)
@@ -339,3 +520,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - 🐛 Fixed timezone compatibility issues in historical price lookups
 - 📚 Updated documentation with VCG examples and API reference
 - 📚 Enhanced example notebook with quarterly/yearly comparisons
+- 🧪 Comprehensive test suite: 273 tests (library + MCP server)
+
+For detailed version history, see [CHANGELOG.md](CHANGELOG.md).

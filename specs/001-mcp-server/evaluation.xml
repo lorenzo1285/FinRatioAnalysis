@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  LLM Evaluation Suite for FinRatioAnalysis MCP Server
+  
+  Tests whether an LLM can correctly select and use the 11 available tools
+  to answer realistic financial analyst questions.
+  
+  Target: ≥9/10 correct answers (SC-005 success criterion)
+  
+  Evaluation harness: .agents/skills/mcp-builder/scripts/evaluation.py
+  Run with: uv run python .agents/skills/mcp-builder/scripts/evaluation.py specs/001-mcp-server/evaluation.xml
+-->
+<evaluation>
+  
+  <!-- Q1: Multi-tool synthesis - DuPont ROE decomposition
+       Tools: finratio_return_ratios (for ROE, margins), finratio_efficiency_ratios (for turnover)
+       Tests: Can LLM identify which company has highest ROE, then retrieve Asset Turnover from different tool?
+       Complexity: High (cross-ticker comparison + multi-tool drill-down)
+  -->
+  <qa_pair>
+    <question>Among Apple (AAPL), Microsoft (MSFT), and Google (GOOGL), which company had the highest Return on Equity (ROE) in fiscal year 2022? For that company, retrieve its Asset Turnover ratio for the same year from the efficiency ratios tool. What is the Asset Turnover value rounded to 2 decimal places?</question>
+    <answer>1.12</answer>
+    <!-- VERIFIED: finratio_return_ratios(ticker=AAPL/MSFT/GOOGL, freq=yearly) 2022 ROE → AAPL highest (1.97); finratio_efficiency_ratios(ticker=AAPL) → AssetTurnover = 1.12 -->
+  </qa_pair>
+  
+  <!-- Q2: Cross-company leverage comparison
+       Tools: finratio_leverage_ratios
+       Tests: Can LLM find and compare Debt-to-Equity ratios across companies?
+       Complexity: Medium (multi-ticker comparison)
+  -->
+  <qa_pair>
+    <question>Among Apple (AAPL), Amazon (AMZN), and Microsoft (MSFT), which company had the LOWEST Debt-to-Equity ratio in fiscal year 2022 (indicating conservative leverage)? Answer with the ticker symbol.</question>
+    <answer>MSFT</answer>
+    <!-- VERIFIED: finratio_leverage_ratios(ticker=AAPL/AMZN/MSFT, freq=yearly) 2022 → AAPL=2.61, AMZN=0.96, MSFT=0.37 → MSFT lowest -->
+  </qa_pair>
+  
+  <!-- Q3: Cross-company profitability ranking
+       Tools: finratio_return_ratios
+       Tests: Can LLM identify ROIC (not ROE, not ROA) in return_ratios and rank across companies?
+       Complexity: Medium (multi-ticker comparison)
+  -->
+  <qa_pair>
+    <question>Among Coca-Cola (KO), PepsiCo (PEP), and Keurig Dr Pepper (KDP), which company had the highest Return on Invested Capital (ROIC) in fiscal year 2022? Answer with the ticker symbol.</question>
+    <answer>KO</answer>
+    <!-- VERIFIED: finratio_return_ratios(ticker=KO/PEP/KDP, freq=yearly) 2022 → KO=0.192, PEP=0.189, KDP=0.053 → KO highest -->
+  </qa_pair>
+  
+  <!-- Q4: Tool disambiguation - Beta source
+       Tools: finratio_valuation_growth_metrics
+       Tests: Can LLM identify Beta is in valuation_growth_metrics (not CAPM which has different metrics)?
+       Complexity: Medium (snapshot tool, field identification)
+  -->
+  <qa_pair>
+    <question>For NVIDIA (NVDA), retrieve the Beta value from the valuation growth metrics tool. Is this Beta value greater than 1.5 (high volatility)? Answer TRUE or FALSE.</question>
+    <answer>TRUE</answer>
+    <!-- VERIFIED: finratio_valuation_growth_metrics(ticker=NVDA) → beta = 2.335 > 1.5 → TRUE -->
+  </qa_pair>
+  
+  <!-- Q5: Cost of capital vs return spread (EVA concept)
+       Tools: finratio_wacc, finratio_return_ratios
+       Tests: Can LLM map financial concept (EVA = ROIC - WACC) to correct tools?
+       Complexity: High (snapshot + time-series, concept understanding, arithmetic)
+  -->
+  <qa_pair>
+    <question>For Johnson &amp; Johnson (JNJ), retrieve its Weighted Average Cost of Capital (WACC) and its Return on Invested Capital (ROIC) for fiscal year 2022. Is ROIC higher than WACC (positive economic value added spread)? Answer YES or NO.</question>
+    <answer>YES</answer>
+    <!-- VERIFIED: finratio_wacc(ticker=JNJ) → 0.076; finratio_return_ratios(ticker=JNJ, freq=yearly) 2022 → ROIC=0.160 > WACC → YES -->
+  </qa_pair>
+  
+  <!-- Q6: Bankruptcy risk zone interpretation
+       Tools: finratio_z_score
+       Tests: Can LLM interpret Altman Z-Score Zone ordinal ranking (Distress < Grey < Safe)?
+       Complexity: Medium (snapshot tool, requires understanding Zone categories)
+  -->
+  <qa_pair>
+    <question>Retrieve the Altman Z-Score Zone classification for General Electric (GE). Is GE classified in the 'Safe Zone' (Z-Score above 2.99)? Answer TRUE or FALSE.</question>
+    <answer>TRUE</answer>
+    <!-- VERIFIED: finratio_z_score(ticker=GE) → Z-Score=3.671, Zone="Safe Zone" → TRUE -->
+  </qa_pair>
+  
+  <!-- Q7: Growth metric identification
+       Tools: finratio_valuation_growth_metrics
+       Tests: Can LLM find 3-year Revenue CAGR specifically (not 1Y, not 5Y)?
+       Complexity: Medium (snapshot tool, field identification)
+  -->
+  <qa_pair>
+    <question>For Netflix (NFLX), retrieve the 3-year Revenue Compound Annual Growth Rate (CAGR) from valuation growth metrics. Is the 3-year Revenue CAGR positive (indicating revenue growth over the period)? Answer TRUE or FALSE.</question>
+    <answer>TRUE</answer>
+    <!-- VERIFIED: finratio_valuation_growth_metrics(ticker=NFLX) → revenue_cagr_3y = 0.126 > 0 → TRUE -->
+  </qa_pair>
+  
+  <!-- Q8: Cash conversion cycle interpretation
+       Tools: finratio_ccc  
+       Tests: Can LLM understand Cash Conversion Cycle and identify efficiency?
+       Complexity: Medium (single tool, concept understanding)
+  -->
+  <qa_pair>
+    <question>For Apple (AAPL), retrieve the Cash Conversion Cycle (CCC) for fiscal year 2022. Is Apple's CCC negative (meaning Apple collects cash from customers before paying suppliers)? Answer TRUE or FALSE.</question>
+    <answer>TRUE</answer>
+    <!-- VERIFIED: finratio_ccc(ticker=AAPL, freq=yearly) 2022 → CCC = -68.20 < 0 → TRUE -->
+  </qa_pair>
+  
+  <!-- Q9: Liquidity threshold check
+       Tools: finratio_liquidity_ratios
+       Tests: Can LLM differentiate Quick Ratio from Current Ratio and apply threshold?
+       Complexity: Low-Medium (single tool, threshold comparison)
+  -->
+  <qa_pair>
+    <question>For CVS Health (CVS), retrieve the Quick Ratio (Acid Test) from liquidity ratios for fiscal year 2022. Is the Quick Ratio below 1.0 (potential liquidity concern)? Answer TRUE or FALSE.</question>
+    <answer>TRUE</answer>
+    <!-- VERIFIED: finratio_liquidity_ratios(ticker=CVS, freq=yearly) 2022 → QuickRatio = 0.354 < 1.0 → TRUE -->
+  </qa_pair>
+  
+  <!-- Q10: Valuation multiple over time
+       Tools: finratio_historical_valuation_metrics
+       Tests: Can LLM filter time-series by date and calculate percentage change?
+       Complexity: Medium-High (date filtering, arithmetic, percentage calculation)
+  -->
+  <qa_pair>
+    <question>For Meta Platforms (META), retrieve the Price-to-Earnings (P/E) ratio from historical valuation metrics for the period closest to December 31, 2022. Was META's P/E ratio below 15 at that time (indicating relatively low valuation)? Answer TRUE or FALSE.</question>
+    <answer>TRUE</answer>
+    <!-- VERIFIED: finratio_historical_valuation_metrics(ticker=META, freq=yearly) 2022 → pe_ratio = 13.45 < 15 → TRUE -->
+  </qa_pair>
+
+</evaluation>

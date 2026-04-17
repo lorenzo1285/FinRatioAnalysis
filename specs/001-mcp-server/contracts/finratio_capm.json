@@ -1,0 +1,107 @@
+{
+  "name": "finratio_capm",
+  "description": "Return CAPM expected return and Sharpe ratio.",
+  "annotations": {
+    "readOnlyHint": true,
+    "destructiveHint": false,
+    "idempotentHint": true,
+    "openWorldHint": true
+  },
+  "input": {
+    "type": "object",
+    "properties": {
+      "ticker": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10,
+        "pattern": "^[A-Z0-9.\\-]+$",
+        "description": "Upper-case ticker symbol (e.g., AAPL, BRK-B)."
+      },
+      "freq": {
+        "type": "string",
+        "enum": [
+          "yearly",
+          "quarterly"
+        ],
+        "default": "yearly"
+      },
+      "response_format": {
+        "type": "string",
+        "enum": [
+          "json",
+          "markdown"
+        ],
+        "default": "json"
+      }
+    },
+    "required": [
+      "ticker"
+    ],
+    "additionalProperties": false
+  },
+  "output": {
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "Symbol": {
+                "type": "string"
+              },
+              "CAPM": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "Sharpe": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "Symbol"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "INVALID_TICKER",
+              "UNSUPPORTED_FREQ",
+              "DATA_UNAVAILABLE",
+              "UPSTREAM_ERROR",
+              "INTERNAL_ERROR"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }
+}

@@ -87,13 +87,9 @@ Thumbs.db
 
 # Project specific
 *.log
-bump_version.py
-PUBLISHING.md
-QUICK_PUBLISH.md
-TESTING.md
-VERSION_MANAGEMENT.md
 
 # Agent configuration
 .claude/
 .specify/
 .specs/
+.agents/

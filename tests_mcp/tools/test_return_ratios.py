@@ -1,0 +1,58 @@
+"""Unit tests for return_ratios tool (T027)."""
+
+import pytest
+from unittest.mock import patch
+
+from finratioanalysis_mcp.tools.return_ratios import finratio_return_ratios
+
+
+def test_return_ratios_happy_path(mock_return_ratios_df):
+    """Test successful return_ratios call with mocked data."""
+    with patch("finratioanalysis_mcp.server.FinRatioAnalysis") as MockClass:
+        mock_instance = MockClass.return_value
+        mock_instance.return_ratios.return_value = mock_return_ratios_df
+        
+        response = finratio_return_ratios(ticker="AAPL", freq="yearly", response_format="json")
+    
+    # Assert response structure
+    assert "data" in response
+    assert isinstance(response["data"], list)
+    assert len(response["data"]) > 0
+    
+    # Verify date field
+    assert "date" in response["data"][0]
+    
+    # Verify expected columns from library_schema.json
+    expected_cols = ["ROE", "ROA", "ROCE", "ROIC", "GrossMargin", "OperatingMargin", "NetProfit"]
+    for col in expected_cols:
+        assert col in response["data"][0], f"Missing column: {col}"
+
+
+def test_return_ratios_markdown_format(mock_return_ratios_df):
+    """Test return_ratios with markdown output."""
+    with patch("finratioanalysis_mcp.server.FinRatioAnalysis") as MockClass:
+        mock_instance = MockClass.return_value
+        mock_instance.return_ratios.return_value = mock_return_ratios_df
+        
+        response = finratio_return_ratios(ticker="AAPL", freq="yearly", response_format="markdown")
+    
+    assert "data" in response
+    assert isinstance(response["data"], str)
+    assert "|" in response["data"]  # Markdown table format
+    
+    # Verify table contains expected column headers
+    assert "date" in response["data"]
+    assert "ROE" in response["data"]
+    assert "ROIC" in response["data"]
+
+
+def test_return_ratios_quarterly_freq(mock_return_ratios_df):
+    """Test return_ratios with quarterly frequency."""
+    with patch("finratioanalysis_mcp.server.FinRatioAnalysis") as MockClass:
+        mock_instance = MockClass.return_value
+        mock_instance.return_ratios.return_value = mock_return_ratios_df
+        
+        response = finratio_return_ratios(ticker="MSFT", freq="quarterly", response_format="json")
+    
+    assert "data" in response
+    assert isinstance(response["data"], list)

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TEST SUBSET: 3-question evaluation for testing setup and estimating token consumption
+  
+  Run with: uv run python .agents/skills/mcp-builder/scripts/evaluation.py specs/001-mcp-server/evaluation-test.xml -t stdio -c python -a -m finratioanalysis_mcp
+-->
+<evaluation>
+  
+  <!-- Q1: Simple single-tool test -->
+  <qa_pair>
+    <question>For NVIDIA (NVDA), retrieve the Beta value from the valuation growth metrics tool. Is this Beta value greater than 1.5 (high volatility)? Answer TRUE or FALSE.</question>
+    <answer>TRUE</answer>
+  </qa_pair>
+  
+  <!-- Q2: Multi-ticker comparison -->
+  <qa_pair>
+    <question>Among Coca-Cola (KO), PepsiCo (PEP), and Keurig Dr Pepper (KDP), which company had the highest Return on Invested Capital (ROIC) in fiscal year 2022? Answer with the ticker symbol.</question>
+    <answer>KO</answer>
+  </qa_pair>
+  
+  <!-- Q3: Multi-tool synthesis -->
+  <qa_pair>
+    <question>For Johnson &amp; Johnson (JNJ), retrieve its Weighted Average Cost of Capital (WACC) and its Return on Invested Capital (ROIC) for fiscal year 2022. Is ROIC higher than WACC (positive economic value added spread)? Answer YES or NO.</question>
+    <answer>YES</answer>
+  </qa_pair>
+
+</evaluation>

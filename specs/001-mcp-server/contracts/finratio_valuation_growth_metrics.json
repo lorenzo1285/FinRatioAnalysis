@@ -1,0 +1,155 @@
+{
+  "name": "finratio_valuation_growth_metrics",
+  "description": "Return current valuation and growth metrics (P/E, forward P/E, P/S, EV/EBITDA, FCF Yield, dividend yield, payout ratio, beta, 3-year revenue and net-income CAGR).",
+  "annotations": {
+    "readOnlyHint": true,
+    "destructiveHint": false,
+    "idempotentHint": true,
+    "openWorldHint": true
+  },
+  "input": {
+    "type": "object",
+    "properties": {
+      "ticker": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10,
+        "pattern": "^[A-Z0-9.\\-]+$",
+        "description": "Upper-case ticker symbol (e.g., AAPL, BRK-B)."
+      },
+      "freq": {
+        "type": "string",
+        "enum": [
+          "yearly",
+          "quarterly"
+        ],
+        "default": "yearly"
+      },
+      "response_format": {
+        "type": "string",
+        "enum": [
+          "json",
+          "markdown"
+        ],
+        "default": "json"
+      }
+    },
+    "required": [
+      "ticker"
+    ],
+    "additionalProperties": false
+  },
+  "output": {
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "Symbol": {
+                "type": "string"
+              },
+              "pe_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "forward_pe": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ps_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ev_ebitda": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "fcf_yield": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "dividend_yield": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "payout_ratio": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "beta": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "revenue_cagr_3y": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "net_income_cagr_3y": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "Symbol"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "INVALID_TICKER",
+              "UNSUPPORTED_FREQ",
+              "DATA_UNAVAILABLE",
+              "UPSTREAM_ERROR",
+              "INTERNAL_ERROR"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }
+}

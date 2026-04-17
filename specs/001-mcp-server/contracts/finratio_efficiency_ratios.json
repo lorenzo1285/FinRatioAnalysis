@@ -1,0 +1,137 @@
+{
+  "name": "finratio_efficiency_ratios",
+  "description": "Return efficiency metrics (asset turnover, receivables, inventory, fixed-asset turnover, FCF margin, reinvestment rate) per reporting period.",
+  "annotations": {
+    "readOnlyHint": true,
+    "destructiveHint": false,
+    "idempotentHint": true,
+    "openWorldHint": true
+  },
+  "input": {
+    "type": "object",
+    "properties": {
+      "ticker": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10,
+        "pattern": "^[A-Z0-9.\\-]+$",
+        "description": "Upper-case ticker symbol (e.g., AAPL, BRK-B)."
+      },
+      "freq": {
+        "type": "string",
+        "enum": [
+          "yearly",
+          "quarterly"
+        ],
+        "default": "yearly"
+      },
+      "response_format": {
+        "type": "string",
+        "enum": [
+          "json",
+          "markdown"
+        ],
+        "default": "json"
+      }
+    },
+    "required": [
+      "ticker"
+    ],
+    "additionalProperties": false
+  },
+  "output": {
+    "type": "object",
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                "AssetTurnover": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "ReceivableTurnover": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "InventoryTurnover": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "FixedAssetTurnover": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "FCF_Margin": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "ReinvestmentRate": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "date"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "INVALID_TICKER",
+              "UNSUPPORTED_FREQ",
+              "DATA_UNAVAILABLE",
+              "UPSTREAM_ERROR",
+              "INTERNAL_ERROR"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "details": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }
+}
