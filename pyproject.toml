@@ -25,13 +25,6 @@ classifiers = [
     "Topic :: Office/Business :: Financial",
     "Topic :: Office/Business :: Financial :: Investment",
 ]
-
-[project.urls]
-Homepage = "https://github.com/lorenzo1285/FinRatioAnalysis"
-Repository = "https://github.com/lorenzo1285/FinRatioAnalysis"
-Documentation = "https://github.com/lorenzo1285/FinRatioAnalysis/tree/main/specs/001-mcp-server"
-"Bug Tracker" = "https://github.com/lorenzo1285/FinRatioAnalysis/issues"
-Changelog = "https://github.com/lorenzo1285/FinRatioAnalysis/blob/main/CHANGELOG.md"
 dependencies = [
     "yfinance",
     "numpy",
@@ -40,6 +33,13 @@ dependencies = [
     "requests",
     "ipykernel>=7.2.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/lorenzo1285/FinRatioAnalysis"
+Repository = "https://github.com/lorenzo1285/FinRatioAnalysis"
+Documentation = "https://github.com/lorenzo1285/FinRatioAnalysis/tree/main/specs/001-mcp-server"
+"Bug Tracker" = "https://github.com/lorenzo1285/FinRatioAnalysis/issues"
+Changelog = "https://github.com/lorenzo1285/FinRatioAnalysis/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 mcp = [
