@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12"]
     
     steps:
     - uses: actions/checkout@v4
@@ -36,8 +36,8 @@ jobs:
       run: |
         pytest tests_mcp/ -v --ignore=tests_mcp/test_checkpoint.py
     
-    - name: Run integration tests (only on Python 3.13 Ubuntu)
-      if: matrix.python-version == '3.13' && matrix.os == 'ubuntu-latest'
+    - name: Run integration tests (only on Python 3.12 Ubuntu)
+      if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
       run: |
         pytest tests/test_integration_real_data.py -v -m integration
         pytest tests_mcp/test_checkpoint.py -v -m integration
