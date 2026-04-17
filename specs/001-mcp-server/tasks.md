@@ -240,12 +240,12 @@ Inspector; happy path + partial-failure both pass.
 
 **Purpose**: End-to-end behavior against real data (Constitution III).
 
-- [ ] **T050** [P] `tests_mcp/test_integration_live.py` — mark
+- [x] **T050** [P] `tests_mcp/test_integration_live.py` — mark
   `@pytest.mark.integration`; basket `["AAPL", "MSFT", "GOOGL", "JPM", "NVDA"]`;
   invoke each tool, assert contract compliance and non-null `ticker`/`Symbol`.
-- [ ] **T051** [P] `tests_mcp/test_integration_bank.py` — mark integration;
+- [x] **T051** [P] `tests_mcp/test_integration_bank.py` — mark integration;
   JPM-only; asserts documented NaN behavior (no crashes) for GrossMargin etc.
-- [ ] **T052** [P] `tests_mcp/test_integration_recent_ipo.py` — mark
+- [x] **T052** [P] `tests_mcp/test_integration_recent_ipo.py` — mark
   integration; pick a recent IPO; assert `DATA_UNAVAILABLE` or `null` for
   3-yr CAGR.
 
