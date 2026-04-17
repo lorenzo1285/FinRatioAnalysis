@@ -251,6 +251,40 @@ Inspector; happy path + partial-failure both pass.
 
 ---
 
+## Phase 9: Technical Debt — Discovered During Integration Testing
+
+**Source**: Live Yahoo Finance integration run (Phase 6, 2026-04-17).
+These issues were found by running T050–T052 against real data. All three are
+correctness gaps between the mock/contract layer and the real library surface.
+
+### Mock & contract drift
+
+- [ ] **T062** [P] Fix CAPM mock fixture and contract column names — real library
+  returns `CAPM` and `Sharpe`; mocks and `contracts/finratio_capm.json` use
+  `Beta` and `Expected_Return`. Update `tests_mcp/fixtures/library_schema.json`
+  CAPM entry, regenerate the mock via `make_snapshot_df`, and align the contract.
+  Verify `tests_mcp/tools/test_capm.py` still passes after the rename.
+
+- [ ] **T063** [P] Fix `valuation_growth_metrics` mock fixture and contract
+  column names — real library returns snake_case columns (`dividend_yield`,
+  `payout_ratio`, `pe_ratio`, `forward_pe`, `ps_ratio`, `beta`, `ev_ebitda`,
+  `fcf_yield`, `revenue_cagr_3y`, `net_income_cagr_3y`); mocks and contract use
+  PascalCase names (`Revenue_Growth_3Y_CAGR`, `EPS_Growth_3Y_CAGR`, etc.).
+  Update `library_schema.json`, contract, and `tests_mcp/tools/test_valuation_growth_metrics.py`.
+
+### Library robustness (constitution Principle IV)
+
+- [ ] **T064** Fix library `KeyError` on missing bank balance-sheet fields —
+  `efficiency_ratios`, `liquidity_ratios`, `ccc`, and `z_score` raise `KeyError`
+  when `Inventory`, `CurrentAssets`, etc. are absent (e.g., JPM). Constitution
+  Principle IV mandates `NaN` return, not an exception. Each method must wrap
+  `.loc[field]` access in a try/except (or use `.get`/`.reindex`) and substitute
+  `NaN` for the missing row. Add targeted unit tests in `tests/` for a bank-like
+  fixture with no Inventory/CurrentAssets columns. **Note**: this is a library
+  change — requires a PATCH version bump and must not alter the DataFrame schema.
+
+---
+
 ## Phase 7: LLM Evaluation (SC-005)
 
 **Purpose**: Measure tool-selection accuracy per mcp-builder Phase 4.
