@@ -47,8 +47,8 @@ In the Inspector UI:
 
 Edit your Claude Desktop config:
 
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
 Add an entry under `mcpServers`:
 
@@ -66,8 +66,21 @@ Add an entry under `mcpServers`:
 }
 ```
 
+**Alternative with `uv`** (if you use `uv` for package management):
+
+```json
+{
+  "mcpServers": {
+    "finratioanalysis": {
+      "command": "uv",
+      "args": ["run", "--with", "finratioanalysis[mcp]", "finratioanalysis-mcp"]
+    }
+  }
+}
+```
+
 Restart Claude Desktop. The `finratioanalysis` server should appear in the
-tools indicator.
+tools indicator (look for the 🔌 icon).
 
 ---
 

@@ -251,6 +251,46 @@ Inspector; happy path + partial-failure both pass.
 
 ---
 
+## Phase 7: LLM Evaluation (SC-005)
+
+**Purpose**: Measure tool-selection accuracy per mcp-builder Phase 4.
+
+- [x] **T053** Author `specs/001-mcp-server/evaluation.xml` — 10 Q&A pairs
+  (read-only, independent, verifiable, stable). Examples: "What is AAPL's
+  latest yearly ROIC?", "Which of AAPL/MSFT/JPM has the lowest Altman Z-Score
+  this year?", "What is NVDA's current P/E?".
+- [x] **T054** Verify each reference answer by invoking the matching tool
+  directly and recording the value in an adjacent comment in the XML.
+- [x] **T055** Run `python .claude/skills/mcp-builder/scripts/evaluation.py
+  specs/001-mcp-server/evaluation.xml`; record the pass rate. Target: ≥9/10.
+  Depends on T053, T054, Phase 3 complete.
+
+---
+
+## Phase 8: Polish & Cross-Cutting
+
+- [x] **T056** [P] Update top-level `README.md` — add a "MCP Server" section
+  linking to `specs/001-mcp-server/quickstart.md` and noting the
+  `FinRatioAnalysis[mcp]` install extra.
+- [x] **T057** [P] Add a `CHANGELOG` entry for the new optional MCP extra
+  (library version unchanged; MCP package is 0.1.0).
+- [x] **T058** Run `pytest tests/ tests_mcp/` end-to-end — confirm library
+  test suite still green (no regressions) and MCP suite green.
+- [x] **T059** Walk through `specs/001-mcp-server/quickstart.md` on a clean
+  venv on Windows and macOS/Linux (one each); fix any step that doesn't work
+  verbatim.
+- [x] **T060** Manual MCP Inspector session: list tools, invoke 3 tools,
+  confirm annotations `readOnlyHint=true` and `openWorldHint=true` are
+  surfaced. Satisfies FR-015 acceptance.
+- [x] **T061** [P] Add uv publish workflow: append `[dependency-groups] dev`
+  to `pyproject.toml` (pytest, jsonschema, build, twine) for `uv sync`
+  parity, and update `PUBLISHING.md` + `QUICK_PUBLISH.md` with a `uv build`
+  / `uv publish` section alongside the existing twine workflow. Verify the
+  built wheel exposes `Provides-Extra: mcp` and ships the
+  `finratioanalysis_mcp` package.
+
+---
+
 ## Phase 9: Technical Debt — Discovered During Integration Testing
 
 **Source**: Live Yahoo Finance integration run (Phase 6, 2026-04-17).
@@ -285,46 +325,6 @@ correctness gaps between the mock/contract layer and the real library surface.
 
 ---
 
-## Phase 7: LLM Evaluation (SC-005)
-
-**Purpose**: Measure tool-selection accuracy per mcp-builder Phase 4.
-
-- [ ] **T053** Author `specs/001-mcp-server/evaluation.xml` — 10 Q&A pairs
-  (read-only, independent, verifiable, stable). Examples: "What is AAPL's
-  latest yearly ROIC?", "Which of AAPL/MSFT/JPM has the lowest Altman Z-Score
-  this year?", "What is NVDA's current P/E?".
-- [ ] **T054** Verify each reference answer by invoking the matching tool
-  directly and recording the value in an adjacent comment in the XML.
-- [ ] **T055** Run `python .claude/skills/mcp-builder/scripts/evaluation.py
-  specs/001-mcp-server/evaluation.xml`; record the pass rate. Target: ≥9/10.
-  Depends on T053, T054, Phase 3 complete.
-
----
-
-## Phase 8: Polish & Cross-Cutting
-
-- [ ] **T056** [P] Update top-level `README.md` — add a "MCP Server" section
-  linking to `specs/001-mcp-server/quickstart.md` and noting the
-  `FinRatioAnalysis[mcp]` install extra.
-- [ ] **T057** [P] Add a `CHANGELOG` entry for the new optional MCP extra
-  (library version unchanged; MCP package is 0.1.0).
-- [ ] **T058** Run `pytest tests/ tests_mcp/` end-to-end — confirm library
-  test suite still green (no regressions) and MCP suite green.
-- [ ] **T059** Walk through `specs/001-mcp-server/quickstart.md` on a clean
-  venv on Windows and macOS/Linux (one each); fix any step that doesn't work
-  verbatim.
-- [ ] **T060** Manual MCP Inspector session: list tools, invoke 3 tools,
-  confirm annotations `readOnlyHint=true` and `openWorldHint=true` are
-  surfaced. Satisfies FR-015 acceptance.
-- [ ] **T061** [P] Add uv publish workflow: append `[dependency-groups] dev`
-  to `pyproject.toml` (pytest, jsonschema, build, twine) for `uv sync`
-  parity, and update `PUBLISHING.md` + `QUICK_PUBLISH.md` with a `uv build`
-  / `uv publish` section alongside the existing twine workflow. Verify the
-  built wheel exposes `Provides-Extra: mcp` and ships the
-  `finratioanalysis_mcp` package.
-
----
-
 ## Dependencies & Execution Order
 
 ### Phase dependencies
@@ -337,6 +337,7 @@ correctness gaps between the mock/contract layer and the real library surface.
 - Phase 6 (Integration) → Phase 3/4/5 complete.
 - Phase 7 (Evaluation) → Phase 3 done at minimum.
 - Phase 8 (Polish) → everything else.
+- Phase 9 (Technical Debt) → Phase 6 done (discovered during integration testing).
 
 ### Within a phase
 
