@@ -15,8 +15,8 @@ class TestReturnRatios:
     def test_return_ratios_columns(self, analyzer):
         """Test that all expected columns are present."""
         result = analyzer.return_ratios()
-        expected_columns = ['ROE', 'ROA', 'ROCE', 'GrossMargin', 'OperatingMargin', 'NetProfit']
-        
+        expected_columns = ['ROE', 'ROA', 'ROCE', 'GrossMargin', 'OperatingMargin', 'NetProfit', 'GrossProfitToAssets']
+
         for col in expected_columns:
             assert col in result.columns, f"Missing column: {col}"
     
@@ -76,11 +76,20 @@ class TestReturnRatios:
         assert 'NetProfit' in result.columns
         assert 0 < result['NetProfit'].iloc[0] < 1
     
+    def test_gross_profit_to_assets_calculation(self, analyzer):
+        """Test GrossProfitToAssets (Novy-Marx quality signal) calculation."""
+        result = analyzer.return_ratios()
+
+        # GrossProfitToAssets = GrossProfit / TotalAssets
+        # From mock data: 169148000000 / 352755000000 ≈ 0.4795
+        assert 'GrossProfitToAssets' in result.columns
+        assert 0 < result['GrossProfitToAssets'].iloc[0] < 1
+
     def test_return_ratios_has_time_series(self, analyzer):
         """Test that result has multiple time periods."""
         result = analyzer.return_ratios()
-        # Mock data has 3 periods, now includes ROIC (7 columns total)
-        assert len(result.columns) == 7
+        # Mock data has 3 periods, now includes ROIC + GrossProfitToAssets (8 columns total)
+        assert len(result.columns) == 8
     
     def test_backward_compatibility(self, analyzer):
         """Test that old ReturnRatios method still works."""
