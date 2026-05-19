@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.4] - 2026-05-18
+
+### Added
+- **`GrossProfitToAssets`** in `return_ratios()`: Gross Profit / Total Assets — the Novy-Marx (2013) quality factor, the cleanest accounting-based quality signal because gross profit precedes all managerial discretion items (D&A, SG&A, interest, tax). Falls back to NaN for financial institutions (banks) consistent with `GrossMargin` handling.
+- **`momentum()`** new method: 12-1 month cross-sectional price momentum (Jegadeesh-Titman 1993). Returns `momentum_12_1` — the 12-month return ending 1 month before today, skipping the most recent 21 trading days to avoid the short-term reversal effect. Uses price history already fetched at init time — zero extra API calls. Returns NaN gracefully when fewer than 273 trading days of history are available.
+
+---
+
 ## [0.2.1] - 2026-04-17
 
 ### Added

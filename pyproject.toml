@@ -1,6 +1,6 @@
 [project]
 name = "FinRatioAnalysis"
-version = "0.2.3"
+version = "0.2.4"
 description = "Quantitative Finance Ratio Analysis with VCG (Value, Quality, Growth) Metrics and MCP Server Support"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -32,6 +32,7 @@ dependencies = [
     "plotly",
     "requests",
     "ipykernel>=7.2.0",
+    "nbconvert>=7.17.1",
 ]
 
 [project.urls]
